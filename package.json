@@ -1,0 +1,15 @@
+{
+  "name": "discord-bot-rezzy",
+  "version": "1.0.0",
+  "description": "Bot Discord sederhana dengan fitur welcome, goodbye, dan menu",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "install": "npm install"
+  },
+  "author": "yopandelreyz",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.14.1"  // Versi discord.js terbaru, pastikan sesuai dengan yang Anda instal
+  }
+}
