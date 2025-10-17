@@ -1,67 +1,56 @@
-const Discord = require('discord.js');
-const client = new Discord.Client({
-  intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent']
+require('dotenv').config();
+const { Client, GatewayIntentBits, EmbedBuilder, Partials } = require('discord.js');
+
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ],
+  partials: [Partials.Channel]
 });
 
-const token = '027f9d0bc45565d70bcc5a339aabbbc36e7371a89d44bb2b19d92b5f16471466';  // Ganti dengan token bot Anda
+const prefix = '!';
 
-client.once('ready', () => {
-  console.log(`Bot logged in as ${client.user.tag}`);
+client.on('ready', () => {
+  console.log(`Bot aktif sebagai ${client.user.tag}`);
 });
 
-client.on('guildMemberAdd', member => {
-  const channel = member.guild.channels.cache.find(ch => ch.name === 'general');
-  if (channel) {
-    channel.send(`hore ada member baru ${member} semoga betah ya`);
-  }
-});
-
-client.on('guildMemberRemove', member => {
-  const channel = member.guild.channels.cache.find(ch => ch.name === 'general');
-  if (channel) {
-    channel.send(`yahh si ${member.user.tag} keluar jir bete gw`);
-  }
-});
-
-client.on('messageCreate', message => {
-  if (message.author.bot) return;
-  if (!message.content.startsWith('!')) return;
-
-  const args = message.content.slice(1).trim().split(/ +/);
-  const command = args.shift().toLowerCase();
-
+client.on('messageCreate', (msg) => {
+  if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+  
+  const command = msg.content.slice(prefix.length).trim().toLowerCase();
+  
   if (command === 'menu') {
-    const embed = new Discord.EmbedBuilder()
-      .setTitle('Menu Bot Rezzy')
-      .setDescription('halo saya rezzy saya adalah bot dari yopandelreyz developer dan owner di server ini')
+    const embed = new EmbedBuilder()
+      .setTitle('Halo saya Rezzy')
+      .setDescription('Saya adalah bot dari yopandelreyz developer dan owner di server ini.')
       .setImage('https://files.catbox.moe/3i01dq.jpg')
-      .setColor('BLUE');
-
-    const row = new Discord.ActionRowBuilder()
-      .addComponents(
-        new Discord.ButtonBuilder()
-          .setLabel('WhatsApp Developer')
-          .setURL('https://wa.me/6281239977516')
-          .setStyle(Discord.ButtonStyle.Link),
-        
-        new Discord.ButtonBuilder()
-          .setLabel('Telegram Developer')
-          .setURL('https://t.me/yopandelreyz')
-          .setStyle(Discord.ButtonStyle.Link),
-        
-        new Discord.ButtonBuilder()
-          .setLabel('TikTok')
-          .setURL('https://tiktok.com/@yopandelrey1')
-          .setStyle(Discord.ButtonStyle.Link),
-        
-        new Discord.ButtonBuilder()
-          .setLabel('Website')
-          .setURL('https://yopandelreyz.com')  // Ganti dengan link website Anda
-          .setStyle(Discord.ButtonStyle.Link)
-      );
-
-    message.channel.send({ embeds: [embed], components: [row] });
+      .addFields(
+        { name: 'WhatsApp Developer', value: '[Klik di sini](https://wa.me/6281239977516)' },
+        { name: 'Telegram Developer', value: '[Klik di sini](https://t.me/yopandelreyz)' },
+        { name: 'TikTok', value: '@yopandelrey1' },
+        { name: 'Email', value: 'cahyaadi679@gmail.com' }
+      )
+      .setColor('Random');
+    
+    msg.channel.send({ embeds: [embed] });
   }
 });
 
-client.login(token);
+client.on('guildMemberAdd', (member) => {
+  const channel = member.guild.systemChannel;
+  if (channel) {
+    channel.send(`Hore ada member baru <@${member.id}> semoga betah ya!`);
+  }
+});
+
+client.on('guildMemberRemove', (member) => {
+  const channel = member.guild.systemChannel;
+  if (channel) {
+    channel.send(`Yahh si <@${member.id}> keluar jir, bete gw.`);
+  }
+});
+
+client.login(process.env.TOKEN);
